@@ -1,29 +1,37 @@
-let eventList = document.querySelector('.eventlist');
-
-
+let eventList = document.querySelector(".eventlist");
 let getButton = document.querySelector("#get");
 let curDisplay = "";
-let tagDic = {};
+let nameDic = {};
+let adressDic = {};
+let urlDic = {};
+let nextLink = "";
+let prevLink = "";
 
 getButton.addEventListener("click", getEvents);
 
 const rootURL = "https://app.ticketmaster.com/discovery/v2/events.json";
 const apiKey = "XnebbPSaGKwLi0abLTq9arXjgmAMtwdL";
 const consumerSecret = "xLwMgGZw41CqhKja";
-const size = 100;
-const eventdate_from = "2021-07-03T23:00:00Z";
+const eventdate_from = "2021-07-02T23:00:00Z";
 const eventdate_to = "2021-07-04T23:00:00Z";
 
 const getButtong = document.querySelector("#get");
 getButton.addEventListener("click", getEvents);
 
+let sizeInput = document.querySelector("#size");
+let stateInput = document.querySelector("#state");
+
 function getEvents() {
-  
   console.log("Getting Events");
-  let queryString = `${rootURL}?size=${size}&startDateTime=${eventdate_from}&endDateTime=${eventdate_to}&apikey=${apiKey}`;
+  let queryString = `${rootURL}?size=${sizeInput.value}&startDateTime=${eventdate_from}&endDateTime=${eventdate_to}&stateCode=${stateInput.value}&apikey=${apiKey}`;
   console.log(queryString);
 
   axios.get(queryString).then((responce) => {
+    console.log(responce);
+    // nextLink = responce.data._links.next.href;
+    // if (document.querySelector("#next-button") === null) {
+    //   addNext(responce);
+    // }
     let events = responce.data._embedded.events;
     filterData(events);
   });
@@ -43,6 +51,7 @@ function filterData(events) {
           events[i]._embedded.venues[0].address.line1 +
           " " +
           events[i]._embedded.venues[0].city.name,
+        url: events[i].url,
       };
       data.push(incomingData);
     }
@@ -62,15 +71,17 @@ function loadImages(data) {
     container.appendChild(nestedContainer);
     nestedContainer.appendChild(img);
     img.id = data[i].index;
-    tagDic[img.id] = data[i].name;
+    nameDic[img.id] = data[i].name;
+    adressDic[img.id] = data[i].adress;
+    urlDic[img.id] = data[i].url;
   }
+
   let images = document.querySelectorAll(".image");
   console.log(images);
   let imageView = document.querySelector(".image-view");
   let imageBox = document.querySelector(".image-box");
   images.forEach(function (img) {
     img.addEventListener("click", function (event) {
-      console.log("CURRENT: ", img);
       curDisplay = event.target.src;
       curId = event.target.id;
       imageView.style.display = "block";
@@ -93,17 +104,35 @@ function currentImageDisplay(i) {
   //imageBox.style.background = `url("${idList[i]}.jpeg") center/cover no-repeat`;
   //imageBox.appendChild(displayPic(idList[i]));
   imageBox.innerHTML = `<img src="${curDisplay}" class="img1">
-        <div class="content">${tagDic[curId]}</div>`;
+        <div class="content">${nameDic[curId]}</div>
+        <div class="content">${adressDic[curId]}</div>
+        <div class="content"><a href="${urlDic[curId]}">${urlDic[curId]}</a></div>`;
 }
 
+function addNext(events) {
+  let nextValue = events.data._links.next;
+  var nextButton = document.createElement("button");
+  nextButton.addEventListener("click", loadNextPage);
+  nextButton.innerHTML = "Next Page";
+  nextButton.classList.add("buttons");
+  nextButton.id = "next-button";
+  getButton.insertAdjacentElement("afterend", nextButton);
+}
 
+function loadNextPage() {
+  clearImages();
+  axios
+    .get(`https://app.ticketmaster.com${nextLink}&apikey=${apiKey}"`)
+    .then((responce) => {
+      let events = responce.data._embedded.events;
+      filterData(events);
+    });
+}
 
-
-
-
-
-
-
-
-
-
+function clearImages() {
+  let allImages = document.querySelectorAll(".image-container");
+  for (i = 0; i < allImages.length; i++) {
+    allImages[i].parentElement.removeChild(allImages[i]);
+  }
+  tagDic = {};
+}
