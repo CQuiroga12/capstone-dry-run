@@ -18,7 +18,6 @@ function getEvents() {
 
   axios.get(queryString).then((responce) => {
     let events = responce.data._embedded.events;
-    console.log(events);
     filterData(events);
   });
 }
