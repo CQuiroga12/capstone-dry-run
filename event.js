@@ -1,3 +1,6 @@
+let eventList = document.querySelector('.eventlist');
+
+
 let getButton = document.querySelector("#get");
 getButton.addEventListener("click", getEvents);
 
@@ -12,6 +15,7 @@ const getButtong = document.querySelector("#get");
 getButton.addEventListener("click", getEvents);
 
 function getEvents() {
+  
   console.log("Getting Events");
   let queryString = `${rootURL}?size=${size}&startDateTime=${eventdate_from}&endDateTime=${eventdate_to}&apikey=${apiKey}`;
   console.log(queryString);
@@ -51,4 +55,67 @@ function filterData(events) {
   //   console.log("Names: ", names);
   //   console.log("Images: ", images);
   //   console.log("Adresses: ", adresses);
+
+
+  for(k = 0; k<data.length; k++){
+    addressName = data[k]['adress'];
+    div1 = document.createElement('div');
+    para = document.createTextNode(addressName);
+    div1.appendChild(para);
+    div1.classList.add('name');
+    div1.id = k;
+    eventList.appendChild(div1);
+
+  }
+
+  console.log(eventList);
+
+  info = document.querySelector('.name');
+  let imageView = document.querySelector('.image-view');
+  let imageBox = document.querySelector('.image-box');
+  let classList = [];
+
+  function currentImageDisplay(){
+    for(i=0; i<classList.length; i++){
+        //imageBox.style.background = `url("${idList[i]}.jpeg") center/cover no-repeat`;
+       //imageBox.appendChild(displayPic(idList[i]));
+       imageBox.innerHTML = 
+       `<img src="${data[i]['image']}" class="img1">
+       <div class="content">${data[i]['name']}</div>`;
+  
+    }
+  }
+  
+  window.onclick = function(event){
+    if(event.target === imageView){
+        imageView.style.display = "none";
+  
+    }
+  }
+  
+  eventList.addEventListener('click', function(event){
+      info = event.target.id;
+      classList.push(info);
+      for(i=0; i<classList.length; i++){
+        imageView.style.display = "block";
+        imageBox.style.display = "block";
+        currentImageDisplay();
+      }
+      console.log(classList);
+      
+      
+  })
+  
 }
+
+
+
+
+
+
+
+
+
+
+
+
