@@ -40,10 +40,13 @@ function getEvents() {
 
 function filterData(events) {
   let data = [];
-  let names = [];
+  let adresses = [];
 
   for (i = 0; i < events.length; i++) {
-    if (!names.includes(events[i].name)) {
+    if (
+      adresses.includes(events[i]._embedded.venues[0].address.line1) === false
+    ) {
+      adresses.push(events[i]._embedded.venues[0].address.line1);
       let incomingData = {
         index: "id#" + i,
         name: events[i].name,
@@ -57,6 +60,7 @@ function filterData(events) {
       data.push(incomingData);
     }
   }
+  console.log(adresses);
   console.log(data);
   loadImages(data);
 }
@@ -78,7 +82,6 @@ function loadImages(data) {
   }
 
   let images = document.querySelectorAll(".image");
-  console.log(images);
   let imageView = document.querySelector(".image-view");
   let imageBox = document.querySelector(".image-box");
   images.forEach(function (img) {
