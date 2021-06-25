@@ -1,4 +1,7 @@
 let getButton = document.querySelector("#get");
+let curDisplay = "";
+let tagDic = {};
+
 getButton.addEventListener("click", getEvents);
 
 const rootURL = "https://app.ticketmaster.com/discovery/v2/events.json";
@@ -24,14 +27,12 @@ function getEvents() {
 
 function filterData(events) {
   let data = [];
-  let indexes = [];
   let names = [];
-  let images = [];
-  let adresses = [];
+
   for (i = 0; i < events.length; i++) {
     if (!names.includes(events[i].name)) {
       let incomingData = {
-        index: i,
+        index: "id#" + i,
         name: events[i].name,
         image: events[i].images[0].url,
         adress:
@@ -40,15 +41,53 @@ function filterData(events) {
           events[i]._embedded.venues[0].city.name,
       };
       data.push(incomingData);
-      //   indexes.push(i);
-      //   names.push(events[i].name);
-      //   images.push(events[i].images[0]);
-      //   adresses.push(events[i]._embedded.venues[0].address);
     }
   }
   console.log(data);
-  //   console.log("Indexes: ", indexes);
-  //   console.log("Names: ", names);
-  //   console.log("Images: ", images);
-  //   console.log("Adresses: ", adresses);
+  loadImages(data);
+}
+
+function loadImages(data) {
+  let container = document.querySelector(".container");
+  for (i = 0; i < data.length; i++) {
+    let nestedContainer = document.createElement("div");
+    nestedContainer.classList.add("image-container", "gallery");
+    let img = document.createElement("img");
+    img.src = data[i].image;
+    img.classList.add("image");
+    container.appendChild(nestedContainer);
+    nestedContainer.appendChild(img);
+    img.id = data[i].index;
+    tagDic[img.id] = data[i].name;
+  }
+  let images = document.querySelectorAll(".image");
+  console.log(images);
+  let imageView = document.querySelector(".image-view");
+  let imageBox = document.querySelector(".image-box");
+  images.forEach(function (img) {
+    img.addEventListener("click", function (event) {
+      console.log("CURRENT: ", img);
+      curDisplay = event.target.src;
+      curId = event.target.id;
+      imageView.style.display = "block";
+      imageBox.style.display = "block";
+      currentImageDisplay(i);
+    });
+  });
+}
+
+window.onclick = function (event) {
+  let imageView = document.querySelector(".image-view");
+  if (event.target === imageView) {
+    imageView.style.display = "none";
+  }
+};
+
+function currentImageDisplay(i) {
+  console.log(curDisplay);
+  let imageBox = document.querySelector(".image-box");
+  //imageBox.style.background = `url("${idList[i]}.jpeg") center/cover no-repeat`;
+  //imageBox.appendChild(displayPic(idList[i]));
+  imageBox.innerHTML = `<img src="${curDisplay}" class="img1">
+        <div class="content">${tagDic[curId]}</div>`;
 }
