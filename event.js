@@ -107,7 +107,7 @@ function currentImageDisplay(i) {
   imageBox.innerHTML = `<img src="${curDisplay}" class="img1">
         <div class="content">${nameDic[curId]}</div>
         <div class="content">${adressDic[curId]}</div>
-        <div class="content"><a href="${urlDic[curId]}">${urlDic[curId]}</a></div>`;
+        <div class="content"><a href="${urlDic[curId]}" target="_blank">${urlDic[curId]}</a></div>`;
 }
 
 function addNext(events) {
