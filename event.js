@@ -22,6 +22,7 @@ let sizeInput = document.querySelector("#size");
 let stateInput = document.querySelector("#state");
 
 function getEvents() {
+  clearImages();
   console.log("Getting Events");
   let queryString = `${rootURL}?size=${sizeInput.value}&startDateTime=${eventdate_from}&endDateTime=${eventdate_to}&stateCode=${stateInput.value}&apikey=${apiKey}`;
   console.log(queryString);
