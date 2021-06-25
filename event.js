@@ -1,3 +1,6 @@
+let eventList = document.querySelector('.eventlist');
+
+
 let getButton = document.querySelector("#get");
 let curDisplay = "";
 let tagDic = {};
@@ -15,6 +18,7 @@ const getButtong = document.querySelector("#get");
 getButton.addEventListener("click", getEvents);
 
 function getEvents() {
+  
   console.log("Getting Events");
   let queryString = `${rootURL}?size=${size}&startDateTime=${eventdate_from}&endDateTime=${eventdate_to}&apikey=${apiKey}`;
   console.log(queryString);
@@ -91,3 +95,15 @@ function currentImageDisplay(i) {
   imageBox.innerHTML = `<img src="${curDisplay}" class="img1">
         <div class="content">${tagDic[curId]}</div>`;
 }
+
+
+
+
+
+
+
+
+
+
+
+
